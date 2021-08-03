@@ -1,4 +1,6 @@
 module.exports = {
     preset: "@hover/jest-playwright-preset",
-    setupFilesAfterEnv: ["expect-playwright"]
+    setupFiles: ['dotenv/config'],
+    setupFilesAfterEnv: ["expect-playwright"],
+    testTimeout: 30000
 };
