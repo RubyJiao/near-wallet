@@ -13,27 +13,28 @@ describe("Account Recovery Using Seed Phrase", () => {
 
     it("navigates to seed phrase page successfully", async () => {
         const user = await page.goto("/").then(() => page.getDocument());
-        await user
-            .findByRole("button", {
-                name: "Import Existing Account",
-            })
-            .then((importAccountBtn) => importAccountBtn.click())
-            .then(() => user.findByText("Recover Account"))
-            .then((recoverAccountBtn) => recoverAccountBtn.click());
+
+        const importAccountBtn = await user.findByRole("button", {
+            name: "Import Existing Account",
+        });
+        await importAccountBtn.click();
+
+        const recoverAccountBtn = await user.findByText("Recover Account");
+        await recoverAccountBtn.click();
 
         expect(page).toMatchURL(/\/recover-seed-phrase$/);
     });
 
     it("recovers the account successfully", async () => {
         const user = await page.getDocument();
-        await user
-            .findByRole("textbox")
-            .then((seedphraseInput) =>
-                seedphraseInput.type(testAccount.seedPhrase)
-            )
-            .then(() => user.findByRole("button"))
-            .then((btn) => btn.click())
-            .then(() => page.waitForNavigation());
+
+        const seedphraseInput = await user.findByRole("textbox");
+        await seedphraseInput.type(testAccount.seedPhrase);
+
+        const findMyAccountBtn = await user.findByRole("button");
+        await findMyAccountBtn.click();
+
+        await page.waitForNavigation();
 
         expect(page).toMatchURL(/.org\/$/);
         // TODO use data-testid prop
