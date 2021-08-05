@@ -60,7 +60,7 @@ import { StakingContainer } from './staking/StakingContainer';
 import Terms from './terms/Terms';
 import { Wallet } from './wallet/Wallet';
 
-import theme from '../theme';
+import { theme } from '../theme';
 import '../index.css';
 
 const {
