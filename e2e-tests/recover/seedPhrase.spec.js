@@ -1,44 +1,47 @@
+const { test, expect } = require("@playwright/test");
+
 const { createTestSubaccount } = require("../utils/account");
+
+const { describe, beforeAll, afterAll } = test;
 
 describe("Account Recovery Using Seed Phrase", () => {
     let testAccount;
+
     beforeAll(async () => {
         testAccount = await createTestSubaccount();
     });
 
+    /** Note: afterAll hook does not currently run if tests timeout / fail:
+     * https://github.com/microsoft/playwright/pull/8008
+     */
     afterAll(async () => {
-        await browser.close();
         await testAccount.delete();
     });
 
-    it("navigates to seed phrase page successfully", async () => {
-        const user = await page.goto("/").then(() => page.getDocument());
+    test("navigates to seed phrase page successfully", async ({ page }) => {
+        await page.goto("/");
 
-        const importAccountBtn = await user.findByRole("button", {
-            name: "Import Existing Account",
-        });
-        await importAccountBtn.click();
-
-        const recoverAccountBtn = await user.findByText("Recover Account");
-        await recoverAccountBtn.click();
+        await page.click(
+            `button:text-matches("Import Existing Account", "i")`
+        );
+        await page.click(`a:text-matches("Recover Account", "i")`);
 
         expect(page).toMatchURL(/\/recover-seed-phrase$/);
     });
 
-    it("recovers the account successfully", async () => {
-        const user = await page.getDocument();
+    test("Account Recovery Using Seed Phrase", async ({ page }) => {
+        await page.goto("/recover-seed-phrase");
 
-        const seedphraseInput = await user.findByRole("textbox");
-        await seedphraseInput.type(testAccount.seedPhrase);
-
-        const findMyAccountBtn = await user.findByRole("button");
-        await findMyAccountBtn.click();
+        await page.fill(
+            "data-test-id=seedPhraseRecoveryInput",
+            testAccount.seedPhrase
+        );
+        await page.click(`[type="submit"]`);
 
         await page.waitForNavigation();
 
-        expect(page).toMatchURL(/.org\/$/);
-        // TODO use data-testid prop
-        expect(await page.textContent(".account-wrapper")).toBe(
+        expect(page).toMatchURL(/\/$/);
+        expect(await page.textContent("data-test-id=currentUser")).toBe(
             testAccount.account.accountId
         );
     });
