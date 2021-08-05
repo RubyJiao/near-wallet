@@ -4,11 +4,11 @@ import { combineReducers } from 'redux';
 
 import allAccounts from '../reducers/allAccounts';
 import recoveryMethods from '../reducers/recoveryMethods';
+import nftSlice from '../redux/slices/nft';
 import account from './account';
 import availableAccounts from './available-accounts';
 import flowLimitation from './flowLimitation';
 import ledger from './ledger';
-import nftSlice from './nft';
 import sign from './sign';
 import staking from './staking';
 import status from './status';
